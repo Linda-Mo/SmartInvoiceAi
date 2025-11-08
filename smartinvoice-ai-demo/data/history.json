@@ -1,0 +1,24 @@
+[
+  {
+    "invoice": 2,
+    "timestamp": "2025-11-08 16:47:34",
+    "status": "Paid",
+    "confidence": 100,
+    "reason": "Keywords: delivered, signed, delivered and signed, proof of delivery",
+    "payment": {
+      "tx_id": "TX-0002",
+      "amount": "2.0"
+    }
+  },
+  {
+    "invoice": 1,
+    "timestamp": "2025-11-08 16:47:08",
+    "status": "Failed",
+    "confidence": 0,
+    "reason": "No delivery keywords detected.",
+    "payment": {
+      "tx_id": "N/A",
+      "amount": "0"
+    }
+  }
+]

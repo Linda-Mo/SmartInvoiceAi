@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SmartInvoice AI</title>
+<link rel="stylesheet" href="/static/style.css">
+<style>
+/* Minimal CSS for popup/modal and buttons */
+.hidden { display:none; }
+.popup {
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center;
+}
+.popup-content {
+  background:#111; padding:1.5rem; border-radius:12px; color:#fff; max-width:400px; width:90%;
+}
+.btn-gradient {
+  background: linear-gradient(90deg, #4ade80, #22d3ee);
+  border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; color:#111;
+  margin-top:0.5rem;
+}
+.btn-gradient.cancel { background: rgba(239,68,68,0.8); color:#fff; }
+.history-table { width:100%; border-collapse: collapse; margin-top:1rem; }
+.history-table th, .history-table td { padding:0.5rem; border:1px solid #444; font-size:0.85rem; }
+.history-table tr.paid { background: #1e3a8a33; }
+.history-table tr.failed { background: #b91c1c33; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>&#128161; SmartInvoice AI</h1>
+    <p class="subtitle">Automated Proof-of-Delivery Verification &amp; Smart Payments</p>
+  </header>
+
+  <div class="card gradient-card">
+    <h2>&#128179; Wallet Info</h2>
+    <p>Source: <strong>{{ source_mask }}</strong></p>
+    <p>Destination: <strong>{{ dest_mask }}</strong></p>
+    <p>Amount: <strong id="amountDisplay">{{ payment_amount }} USDC</strong></p>
+  </div>
+
+  <div class="card upload-card">
+    <h2>&#128228; Upload Proof of Delivery</h2>
+    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+      <input type="file" name="file" id="fileInput" required>
+      <button type="button" id="reviewBtn" class="btn-gradient">&#128065; Review &amp; Send</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>&#128220; Transaction History</h2>
+    {% if history %}
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Invoice</th><th>Status</th><th>Confidence</th><th>Reason</th><th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in history %}
+          <tr class="{{ 'paid' if item.status=='Paid' else 'failed' }}" onclick="showTransaction({{ item.invoice }})" style="cursor:pointer;">
+            <td>{{ item.invoice }}</td>
+            <td>{{ item.status }}</td>
+            <td>{{ item.confidence }}%</td>
+            <td>{{ item.reason }}</td>
+            <td>{{ item.timestamp }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No transactions yet.</p>
+    {% endif %}
+  </div>
+
+  <footer>
+    <p>&#9881;&#65039; SmartInvoice AI &copy; 2025</p>
+  </footer>
+</div>
+
+<!-- Review Popup -->
+<div id="reviewPopup" class="popup hidden">
+  <div class="popup-content">
+    <h3>&#128221; Review Transaction</h3>
+    <p><strong>From:</strong> {{ source_mask }}</p>
+    <p><strong>To:</strong> {{ dest_mask }}</p>
+    <p><strong>Amount:</strong> {{ payment_amount }} USDC</p>
+    <p><strong>File:</strong> <span id="fileName">No file selected</span></p>
+    <div>
+      <button type="button" class="btn-gradient" onclick="confirmSend()">&#10004; Confirm</button>
+      <button type="button" class="btn-gradient cancel" onclick="closePopup('reviewPopup')">&#10060; Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Transaction Popup -->
+<div id="txPopup" class="popup {% if not popup %}hidden{% endif %}">
+  <div class="popup-content">
+    <h3>&#128179; Transaction</h3>
+    {% if popup %}
+      <p><strong>Invoice:</strong> {{ popup.invoice }}</p>
+      <p><strong>Status:</strong> {{ popup.status }}</p>
+      <p><strong>Amount:</strong> {{ popup.payment.amount }} USDC</p>
+      <p><strong>Transaction ID:</strong> {{ popup.payment.tx_id }}</p>
+      <p><strong>Timestamp:</strong> {{ popup.timestamp }}</p>
+    {% endif %}
+    <button onclick="closePopup('txPopup')" class="btn-gradient">Close</button>
+  </div>
+</div>
+
+<!-- Error Popup -->
+<div id="errorPopup" class="popup {% if not error %}hidden{% endif %}">
+  <div class="popup-content error">
+    <h3>&#9888;&#65039; Payment Error</h3>
+    <p>{{ error }}</p>
+    <button onclick="closePopup('errorPopup')" class="btn-gradient">Close</button>
+  </div>
+</div>
+
+<!-- Transaction Details Popup -->
+<div id="detailPopup" class="popup hidden">
+  <div class="popup-content">
+    <h3>&#128202; Transaction Details</h3>
+    <div id="txDetails"></div>
+    <button onclick="closePopup('detailPopup')" class="btn-gradient">Close</button>
+  </div>
+</div>
+
+<script>
+// Show review popup
+document.getElementById('reviewBtn').addEventListener('click', ()=>{
+  const fileInput = document.getElementById('fileInput');
+  const fileName = fileInput.files.length ? fileInput.files[0].name : 'No file selected';
+  document.getElementById('fileName').textContent = fileName;
+  document.getElementById('reviewPopup').classList.remove('hidden');
+});
+
+// Confirm and send
+function confirmSend(){
+  closePopup('reviewPopup');
+  document.getElementById('uploadForm').submit();
+}
+
+// Close popup
+function closePopup(id){ document.getElementById(id).classList.add('hidden'); }
+
+// Show transaction details popup
+async function showTransaction(invoiceId){
+  const res = await fetch(`/transaction/${invoiceId}`);
+  if(!res.ok){ alert("Transaction not found."); return; }
+  const data = await res.json();
+  const html = `
+    <p><strong>Invoice:</strong> ${data.invoice}</p>
+    <p><strong>Status:</strong> ${data.status}</p>
+    <p><strong>Confidence:</strong> ${data.confidence}%</p>
+    <p><strong>Reason:</strong> ${data.reason}</p>
+    <p><strong>Transaction ID:</strong> ${data.payment.tx_id}</p>
+    <p><strong>Amount:</strong> ${data.payment.amount} USDC</p>
+    <p><strong>Timestamp:</strong> ${data.timestamp}</p>
+  `;
+  document.getElementById('txDetails').innerHTML = html;
+  document.getElementById('detailPopup').classList.remove('hidden');
+
+  // Update wallet amount dynamically if Paid
+  if(data.status === "Paid"){
+    document.getElementById('amountDisplay').textContent = data.payment.amount + " USDC";
+  }
+}
+</script>
+</body>
+</html>

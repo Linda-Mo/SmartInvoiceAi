@@ -1,0 +1,200 @@
+/* Import Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+/* ---- BODY & HTML ---- */
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg, #3b82f6, #9333ea);
+    color: #fff;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+/* ---- CONTAINER ---- */
+.container {
+    width: 90%;
+    max-width: 1000px;
+    background: transparent; /* show gradient */
+    padding: 2rem;
+}
+
+/* ---- HEADER ---- */
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    margin: 0;
+}
+
+.subtitle {
+    color: #f3f4f6;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
+
+/* ---- LOADING SPINNER ---- */
+.spinner {
+  border: 4px solid rgba(255,255,255,0.3);
+  border-top: 4px solid #fff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+/* ---- CARDS ---- */
+.card {
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+/* Animated number change for wallet amount */
+#walletAmount {
+    transition: all 0.8s ease-in-out;
+}
+
+
+
+/* Gradient wallet card */
+.gradient-card {
+    background: linear-gradient(135deg, #3b82f6, #9333ea);
+    color: white;
+}
+
+/* Wallet info */
+.wallet-info span {
+    font-weight: 600;
+}
+
+/* ---- UPLOAD BUTTON ---- */
+.upload-card input[type="file"] {
+    display: block;
+    margin: 1rem 0;
+}
+
+.btn-gradient {
+    background: linear-gradient(135deg, #3b82f6, #9333ea);
+    border: none;
+    color: white;
+    padding: 0.9rem 1.8rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s, background 0.3s;
+}
+
+.btn-gradient:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #2563eb, #7e22ce);
+}
+/* ---- POPUPS ---- */
+.popup {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.popup.hidden { display: none; }
+
+.popup-content {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 420px;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+.popup-content.error {
+  background: rgba(239,68,68,0.8);
+}
+.popup-content h3 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+
+/* ---- TRANSACTION TABLE ---- */
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.history-table th, .history-table td {
+    text-align: left;
+    padding: 0.8rem;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+}
+
+.history-table th {
+    background-color: rgba(255,255,255,0.2);
+    font-weight: 600;
+}
+
+/* Transaction row colors */
+.history-table tr.paid {
+    background-color: rgba(34,197,94,0.4);
+}
+.history-table tr.failed {
+    background-color: rgba(239,68,68,0.4);
+}
+.history-table tr.pending {
+    background-color: rgba(250,204,21,0.4);
+}
+
+/* ---- ERROR MESSAGE ---- */
+.error-msg {
+    background-color: rgba(239,68,68,0.5);
+    color: #fff;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-top: 1rem;
+    font-weight: 600;
+}
+
+/* ---- FOOTER ---- */
+footer {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #f3f4f6;
+    margin-top: 2rem;
+}
