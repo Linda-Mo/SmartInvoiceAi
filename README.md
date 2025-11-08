@@ -1,5 +1,8 @@
 # SmartInvoice AI
 
+![SmartInvoice Dashboard](dashboard.png)
+
+
 ![Python](https://img.shields.io/badge/python-3.11-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.110-green)
 
