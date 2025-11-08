@@ -1,6 +1,6 @@
 # SmartInvoice AI
 
-![SmartInvoice Dashboard](Image Oct 15, 2025, 12_53_22 PM.png)
+![SmartInvoice Dashboard](path/to/Image Oct 15, 2025, 12_53_22 PM.png)
 
 
 ![Python](https://img.shields.io/badge/python-3.11-blue)
