@@ -1,9 +1,0 @@
-fastapi
-uvicorn[standard]
-jinja2
-python-multipart
-aiofiles
-requests
-python-dotenv
-pytesseract
-Pillow
